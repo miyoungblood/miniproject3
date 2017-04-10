@@ -1,0 +1,41 @@
+---
+title: "practice"
+author: "Jordan Moody"
+date: "4/10/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(mdsr)
+library(RMySQL)
+db <- dbConnect_scidb(dbname = "imdb")
+```
+
+## Making table of number of movies in each rating
+```{r}
+db %>%
+  dbGetQuery("SELECT *
+             FROM info_type;")
+
+```
+```{r}
+db %>%
+  dbGetQuery("SELECT *
+             FROM movie_info
+             WHERE info_type_id = 97
+             LIMIT 0,10;")
+```
+### Gross is info_type_id = 107
+Country is info_type_id = 8 (filter for USA)
+MPAA is info_type_id = 97 (filter '%Rated R%' or similar)
+```{r}
+db %>%
+  dbGetQuery("SELECT sum(info)
+             FROM movie_info m
+             WHERE ")
+
+```
+###Make table displaying the number of each rating per year since 1968
+
+
