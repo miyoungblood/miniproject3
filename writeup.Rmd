@@ -26,16 +26,31 @@ db %>%
              WHERE info_type_id = 97
              LIMIT 0,10;")
 ```
+```{r}
+db %>%
+  dbGetQuery("SELECT *
+             FROM title
+             LIMIT 0, 10")
+```
 ### Gross is info_type_id = 107
 Country is info_type_id = 8 (filter for USA)
 MPAA is info_type_id = 97 (filter '%Rated R%' or similar)
 ```{r}
 db %>%
-  dbGetQuery("SELECT sum(info)
-             FROM movie_info m
-             WHERE ")
+  dbGetQuery("SELECT t.production_year, sum(m.info) as N, 
+             FROM title t
+             JOIN movie_info m ON m.movie_id = t.id
+             WHERE t.production_year > 1967
+             AND t.info_type = 1
+             AND m.info_type_id = 97
+             AND m.info = '%Rated R%'
+             GROUP BY t.production_year;")
 
 ```
 ###Make table displaying the number of each rating per year since 1968
 
 
+##Steps:
+Make table of number of films with each rating for each year???
+Other things
+Join with table of grosses to look at grosses for each movie??? (Possibly use sums)
