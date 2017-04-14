@@ -58,6 +58,6 @@ db %>%
 ###Why is it not taking year as numbers?
 
 ##STEPS
-1. make table of total number of movies each year and total number of R rated movies each year (percentage of movies each year rated r)
-2. make table of different reasons for r rating 
-3. make two graphs, one with percentage of movies rated r and one with reasons (different colors, both over time)
+1. Look at distribution of film ratings from 1968 - 2016. (Percentage vs. counts)
+2. Look at the relationship between ratings and box office earnings.
+3. ***Optional: Bar graph depicting R rated films for certain key words. 
