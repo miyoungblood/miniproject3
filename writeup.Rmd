@@ -1,7 +1,7 @@
 ---
-title: "practice"
-author: "Jordan Moody"
-date: "4/10/2017"
+title: "Mini Project 3"
+author: "Jordan Moody, Marisa Youngblood, and Tara Marin"
+date: "4/14/2017"
 output: html_document
 ---
 
@@ -17,7 +17,6 @@ db <- dbConnect_scidb(dbname = "imdb")
 db %>%
   dbGetQuery("SELECT *
              FROM info_type;")
-
 ```
 ```{r}
 db %>%
@@ -53,11 +52,9 @@ db %>%
              WHERE mi.info_type_id = 97
              AND info LIKE '%Rated R%'
              GROUP BY t.production_year;")
-
 ```
-###Why is it not taking year as numbers?
-
 ##STEPS
 1. Look at distribution of film ratings from 1968 - 2016. (Percentage vs. counts)
+- Historical context?
 2. Look at the relationship between ratings and box office earnings.
 3. ***Optional: Bar graph depicting R rated films for certain key words. 
