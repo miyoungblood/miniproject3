@@ -30,6 +30,7 @@ db %>%
 db %>%
   dbGetQuery("SELECT *
              FROM title
+GROUP BY production_year
              LIMIT 0, 10")
 ```
 ### Gross is info_type_id = 107
@@ -37,20 +38,26 @@ Country is info_type_id = 8 (filter for USA)
 MPAA is info_type_id = 97 (filter '%Rated R%' or similar)
 ```{r}
 db %>%
-  dbGetQuery("SELECT t.production_year, sum(m.info) as N, 
+  dbGetQuery("SELECT t.production_year, t.id, mi.info_type_id
              FROM title t
-             JOIN movie_info m ON m.movie_id = t.id
-             WHERE t.production_year > 1967
-             AND t.info_type = 1
-             AND m.info_type_id = 97
-             AND m.info = '%Rated R%'
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             GROUP BY t.production_year
+             LIMIT 0, 10")
+```
+```{r}
+db %>%
+  dbGetQuery("SELECT t.production_year, sum(mi.info_type_id) AS num_R
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND info LIKE 'Rated R'
              GROUP BY t.production_year;")
 
 ```
-###Make table displaying the number of each rating per year since 1968
+###Why is it not taking year as numbers?
 
-
-##Steps:
-Make table of number of films with each rating for each year???
-Other things
-Join with table of grosses to look at grosses for each movie??? (Possibly use sums)
+##STEPS
+1. make table of total number of movies each year and total number of R rated movies each year (percentage of movies each year rated r)
+2. make table of different reasons for r rating 
+3. make two graphs, one with percentage of movies rated r and one with reasons (different colors, both over time)
