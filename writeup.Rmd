@@ -51,7 +51,7 @@ db %>%
              FROM title t
              JOIN movie_info mi ON t.id = mi.movie_id
              WHERE mi.info_type_id = 97
-             AND info LIKE 'Rated R'
+             AND info LIKE '%Rated R%'
              GROUP BY t.production_year;")
 
 ```
