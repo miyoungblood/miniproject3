@@ -1,0 +1,78 @@
+---
+title: "Mini Project 3"
+author: "Jordan Moody, Marisa Youngblood, and Tara Marin"
+date: "4/14/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(mdsr)
+library(RMySQL)
+library(tidyr)
+db <- dbConnect_scidb(dbname = "imdb")
+```
+
+## Problem statement
+```{r}
+#Querying data for each rating using indices and joins
+sql_r <- db %>%
+  dbGetQuery("SELECT t.production_year, count(mi.info) AS R
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND mi.info LIKE '%Rated R%'
+             AND t.production_year > 1967
+             GROUP BY t.production_year;")
+sql_pg13 <- db %>%
+  dbGetQuery("SELECT t.production_year, count(mi.info) AS PG13
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND mi.info LIKE '%Rated PG-13%'
+             AND t.production_year > 1967
+             GROUP BY t.production_year;")
+sql_nc17 <- db %>%
+  dbGetQuery("SELECT t.production_year, count(mi.info) AS NC17
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND mi.info LIKE '%Rated NC-17%'
+             AND t.production_year > 1967
+             GROUP BY t.production_year;")
+sql_pg <- db %>%
+  dbGetQuery("SELECT t.production_year, count(mi.info) AS PG
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND mi.info LIKE '%Rated PG%'
+             AND t.production_year > 1967
+             GROUP BY t.production_year;")
+```
+```{r}
+#Compiling into one table
+rating_counts <- sql_r %>%
+  left_join(sql_pg13, by = "production_year") %>%
+  left_join(sql_pg, by = "production_year") %>%
+  left_join(sql_nc17, by = "production_year")
+#Tidying
+rating_counts2 <- rating_counts %>%
+  gather(key = "Rating", value = "N", -production_year)
+```
+## DELETE I didn't use G rated movies because the data said there was a single movie in 2009 and that was it, so ratings start at pg-13
+```{r, warning=FALSE}
+#Making time series for movie counts
+ggplot(rating_counts2, aes(x = production_year, y = N, color = Rating)) +
+  geom_line() +
+  xlab("Production Year") + ylab("Number of Movies") +
+  ggtitle("Number of Movies Rated Yearly") +
+  theme_bw()
+```
+
+
+
+
+
+
+
+
