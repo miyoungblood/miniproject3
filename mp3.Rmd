@@ -66,8 +66,7 @@ Before 1934, there was virtually no film rating system in place. Beginning in 19
 
 The new technology of sound in film ushered in production codes, as “talkies” drew in larger audiences, including young children. Sound films also saw an increase in the themes of violence and grim realism. These production codes consisted of a list of prohibited subjects - such as “the illegal trafficking of drugs,” “white slavery,” and “the ridicule of the clergy.”  
 
-The 1952 Supreme Court Case - Joseph Burstyn v. Wilson - ruled that “Expression by
-means of motion pictures is included within the free speech and free press guaranty of the First and Fourteenth amendments.” The MPAA was then free to institute a voluntary rating system: G for general audiences, M for mature audiences (later changed to today’s PG rating), R for Restricted, and X (later changed to NC-17 in 1990 after the adult film capitalized on the XXX rating). The PG-13 rating was only added in the mid-80’s as an in-between classification in response to the controversy surrounding films such as Indiana Jones receiving a PG rating despite the amount of violence depicted.  
+The 1952 Supreme Court Case - Joseph Burstyn v. Wilson - ruled that: “Expression by means of motion pictures is included within the free speech and free press guaranty of the First and Fourteenth amendments.” The MPAA was then free to institute a voluntary rating system: G for general audiences, M for mature audiences (later changed to today’s PG rating), R for Restricted, and X (later changed to NC-17 in 1990 after the adult film industry capitalized on the XXX rating). The PG-13 rating was only added in the mid-80’s as an in-between classification in response to the controversy surrounding films such as Indiana Jones receiving a PG rating despite the amount of violence depicted.  
 ```{r, warning=FALSE}
 #Making time series for movie counts
 ggplot(rating_counts2, aes(x = production_year, y = N, color = Rating)) +
