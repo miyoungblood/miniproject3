@@ -68,11 +68,63 @@ ggplot(rating_counts2, aes(x = production_year, y = N, color = Rating)) +
   ggtitle("Number of Movies Rated Yearly") +
   theme_bw()
 ```
-
-
-
-
-
-
-
-
+##words
+```{r}
+#Querying data for keywords in R rated movies using indices and joins
+word_sexual <- db %>%
+  dbGetQuery("SELECT t.production_year, count(mi.info) AS sexual
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND mi.info LIKE '%Rated R%'
+             AND t.production_year > 1967
+             AND mi.info LIKE '%sexual%'
+             GROUP BY production_year;")
+word_violence <- db %>%
+  dbGetQuery("SELECT t.production_year, count(mi.info) AS violence
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND mi.info LIKE '%Rated R%'
+             AND t.production_year > 1967
+             AND mi.info LIKE '%violence%'
+             GROUP BY production_year;")
+word_drug <- db %>%
+  dbGetQuery("SELECT t.production_year, count(mi.info) AS drug
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND mi.info LIKE '%Rated R%'
+             AND t.production_year > 1967
+             AND mi.info LIKE '%drug%'
+             GROUP BY production_year;")
+word_language <- db %>%
+  dbGetQuery("SELECT t.production_year, count(mi.info) AS language
+             FROM title t
+             JOIN movie_info mi ON t.id = mi.movie_id
+             WHERE mi.info_type_id = 97
+             AND mi.info LIKE '%Rated R%'
+             AND t.production_year > 1967
+             AND mi.info LIKE '%language%'
+             GROUP BY production_year;")
+```
+```{r}
+#Compiling into one table
+keyword_counts <- word_sexual %>%
+  left_join(word_drug, by = "production_year") %>%
+  left_join(word_violence, by = "production_year") %>%
+  left_join(word_language, by = "production_year") %>%
+  filter(production_year > 1989)
+#Tidying
+keyword_counts2 <- keyword_counts %>%
+  gather(key = "Keyword", value = "N", -production_year)
+```
+```{r}
+#Making line graph for keywords
+ggplot(keyword_counts2, aes(x = production_year, y = N, color = Keyword)) +
+  geom_line() +
+  ggtitle("Key Words in R Movie Ratings") +
+  xlab("Production Year") + ylab("Number of Movies using Keyword") +
+  theme_bw()
+```
+##DELETE For the key word graph I focused on movies made since 1990 because the ones before didn't have data (MPAA didn't start adding reasons for ratings until 1990)
