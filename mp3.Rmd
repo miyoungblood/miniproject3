@@ -13,7 +13,8 @@ library(tidyr)
 db <- dbConnect_scidb(dbname = "imdb")
 ```
 
-## Problem statement
+####Problem statement
+We decided to analyze the story of Hollywood censorship and the policy decisions that ultimately led to the movie rating system we are familiar with today. In 1968, the Motion Picture Association of America (MPAA), newly freed from the puritanical binds of production code, implemented a voluntary classification system. By observing trends in the distribution of film ratings over time, we hope to address the “query” of whether or not cinema has reflected the movement toward social progressivism that has taken place since the early 20th century. We will explore the historical contexts which may have influenced any patterns that emerge. Furthermore, as the IMDB database provides the rationale behind the MPAA committee’s decision to rate a film in a certain manner in the movie_info table, among R-rated movies, what subjects or themes have been considered most taboo over time?  
 ```{r}
 #Querying data for each rating using indices and joins
 sql_r <- db %>%
@@ -55,11 +56,18 @@ rating_counts <- sql_r %>%
   left_join(sql_pg13, by = "production_year") %>%
   left_join(sql_pg, by = "production_year") %>%
   left_join(sql_nc17, by = "production_year")
+
 #Tidying
 rating_counts2 <- rating_counts %>%
   gather(key = "Rating", value = "N", -production_year)
 ```
-## DELETE I didn't use G rated movies because the data said there was a single movie in 2009 and that was it, so ratings start at pg-13
+####Some context
+Before 1934, there was virtually no film rating system in place. Beginning in 1907, municipalities were able to exercise censorship over the content of films, as local government agents - such as the chief of police - were able to issue and deny permits for the showing of films based on “moral grounds.” This was not good news for Hollywood studios - who feared intervention from the government. They came together to form the MPAA, which lobbied in Washington on behalf of the movie industry. 
+
+The new technology of sound in film ushered in production codes, as “talkies” drew in larger audiences, including young children. Sound films also saw an increase in the themes of violence and grim realism. These production codes consisted of a list of prohibited subjects - such as “the illegal trafficking of drugs,” “white slavery,” and “the ridicule of the clergy.”  
+
+The 1952 Supreme Court Case - Joseph Burstyn v. Wilson - ruled that “Expression by
+means of motion pictures is included within the free speech and free press guaranty of the First and Fourteenth amendments.” The MPAA was then free to institute a voluntary rating system: G for general audiences, M for mature audiences (later changed to today’s PG rating), R for Restricted, and X (later changed to NC-17 in 1990 after the adult film capitalized on the XXX rating). The PG-13 rating was only added in the mid-80’s as an in-between classification in response to the controversy surrounding films such as Indiana Jones receiving a PG rating despite the amount of violence depicted.  
 ```{r, warning=FALSE}
 #Making time series for movie counts
 ggplot(rating_counts2, aes(x = production_year, y = N, color = Rating)) +
@@ -68,7 +76,13 @@ ggplot(rating_counts2, aes(x = production_year, y = N, color = Rating)) +
   ggtitle("Number of Movies Rated Yearly") +
   theme_bw()
 ```
-##words
+
+From our plot, we can see that overall, R-rated movies constituted the majority of films produced, beginning in the mid-80’s. However, the predominance of R-rated movies has been steadily declining. In the year 2016, R-rated movies made up 48% of total films produced, PG-13 movies made up 29%, PG movies made up 48%, and NC-17 movies made up 0%. We realize these percentages do not add up to 100%, but these are the numbers that came directly from our dataset rather than an external source. 
+
+While this clear disparity in the number of R-rated movies made may speak to a growing “permissiveness” in the U.S. film industry, our plot is flawed in that it merely displays the quantity of films given certain ratings, which, appearing as a dramatic spike beginning in the 1990’s, reflects an increase in films that submit themselves to be rated rather than reflecting any change in attitude towards the content of the movies themselves. In fact, the 1960’s - as film censorship was overturned by the MPAA’s rating system - are often cited as the time in which permissiveness was most truly expressed in film, driven by the influences of a younger, counter-cultural audience. 
+
+However, there is an economic incentive to have your film be rated a certain way in order to allow for a broader audience. “The more embattled frontier is the one between PG-13 and R” (New York Times, 2010). According to The Wrap, on average, PG-13 movies gross three times that of R-rated films at the box office. Films rated any higher often face limited distribution or, in the case of movies rated NC-17, an outright refusal to exhibit/sell their films. So, why are R-rated films historically the most prevalent? One hypothesis is that in the last 20 years or so, producers and distributors no longer rely on box office earnings alone. For several years, box office ticket sales have been declining: “For some movies, theatrical releases are mainly to build buzz, and are secondary to VOD and downloads in terms of revenue” (The Wrap, 2013). The Internet has also dramatically transformed how films are distributed and what content is available to the public. 
+
 ```{r}
 #Querying data for keywords in R rated movies using indices and joins
 word_sexual <- db %>%
@@ -123,8 +137,11 @@ keyword_counts2 <- keyword_counts %>%
 #Making line graph for keywords
 ggplot(keyword_counts2, aes(x = production_year, y = N, color = Keyword)) +
   geom_line() +
-  ggtitle("Key Words in R Movie Ratings") +
-  xlab("Production Year") + ylab("Number of Movies using Keyword") +
+  ggtitle("Key Themes in R Rated Movies") +
+  xlab("Production Year") + ylab("Number of Movies") +
   theme_bw()
 ```
-##DELETE For the key word graph I focused on movies made since 1990 because the ones before didn't have data (MPAA didn't start adding reasons for ratings until 1990)
+
+In order to explore an alternative hypothesis as to why R-rated films are the most prevalent despite not being the most lucrative, we must look at the flaws and criticisms regarding the MPAA’s film rating system as a whole. The MPAA’s rating board consists of 8-13 members who are selected in order to best characterize what an “average parent” would allow their child to see on film. They rate approximately 800 films per year! The board has drawn criticism regarding the arbitrariness of their often ambiguous and flexible standards. Oftentimes, it is difficult to comprehend the logic behind what separates one film’s rating from another. Additionally, the rating system has drawn a lot of criticism by placing too much emphasis on sex while tolerating massive amounts of graphic violence. 
+
+Officially, the board examines each individual film in terms of language, sexual content, violence, and drug use. In our second plot, we see that the most frequently cited reason for giving a film an R rating is explicit language. If a movie contains one sexually-derived expletive, it automatically draws a PG-13 rating and if that word is used more than once, the film will most likely result in an R rating. Sexual content and violence come in close second, while drug use falls last. However, the overall decline in all four subjects after the year 2000 suggests that the MPAA rating board no longer places as much emphasis on these taboo themes in their rating selection process. 
